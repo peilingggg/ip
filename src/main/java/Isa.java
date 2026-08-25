@@ -19,7 +19,7 @@ public class Isa {
                 System.out.println("Bye. Hope you have a nice day!");
                 System.out.println("____________________________________________________________");
                 break;
-            } /*else if (command.equals("list")) {
+            } else if (command.equals("list")) {
                 for (int i = 0; i < taskCount; ++i) {
                     System.out.println(" " + (i + 1) + ". " + tasks[i]);
                 }
@@ -27,9 +27,7 @@ public class Isa {
                 tasks[taskCount] = command;
                 taskCount++;
                 System.out.println(" added: " + command);
-            }*/
-
-            System.out.println(" " + command);
+            }
             System.out.println("____________________________________________________________");
         }
         scanner.close();

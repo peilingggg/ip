@@ -153,9 +153,9 @@ public class Isa {
         String details = command.substring(COMMAND_DEADLINE.length());
         String[] parts = details.split(DEADLINE_SEPARATOR, 2);
         String description = parts[0];
-        String by = parts[1];
+        String dueDate = parts[1];
 
-        addTask(new Deadline(description, by));
+        addTask(new Deadline(description, dueDate));
     }
 
     /**
@@ -168,12 +168,12 @@ public class Isa {
         int fromPosition = details.indexOf(EVENT_FROM_SEPARATOR);
         int toPosition = details.indexOf(EVENT_TO_SEPARATOR);
         String description = details.substring(0, fromPosition);
-        String from = details.substring(
+        String startTime = details.substring(
                 fromPosition + EVENT_FROM_SEPARATOR.length(), toPosition);
-        String to = details.substring(
+        String endTime = details.substring(
                 toPosition + EVENT_TO_SEPARATOR.length());
 
-        addTask(new Event(description, from, to));
+        addTask(new Event(description, startTime, endTime));
     }
 
     /**

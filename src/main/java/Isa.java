@@ -4,7 +4,6 @@ import java.util.Scanner;
  * Runs the Isa task manager.
  */
 public class Isa {
-    private static final int MAX_TASK_COUNT = 100;
     private static final String DIVIDER =
             "____________________________________________________________";
     private static final String COMMAND_TODO = "todo ";
@@ -17,8 +16,7 @@ public class Isa {
     private static final String EVENT_TO_SEPARATOR = " /to ";
 
     private final Scanner scanner = new Scanner(System.in);
-    private final Task[] tasks = new Task[MAX_TASK_COUNT];
-    private int taskCount = 0;
+    private final TaskList taskList = new TaskList();
 
     /**
      * Starts Isa and processes commands until the user exits.
@@ -92,8 +90,8 @@ public class Isa {
     private void printTasks() {
         System.out.println(" Here are the tasks in your list:");
 
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println(" " + (i + 1) + "." + tasks[i]);
+        for (int i = 0; i < taskList.size(); i++) {
+            System.out.println(" " + (i + 1) + "." + taskList.get(i));
         }
     }
 
@@ -104,10 +102,11 @@ public class Isa {
      */
     private void markTaskAsDone(String command) {
         int taskIndex = parseTaskIndex(command, COMMAND_MARK);
-        tasks[taskIndex].markAsDone();
+        Task task = taskList.get(taskIndex);
+        task.markAsDone();
 
         System.out.println(" Nice! I've marked this task as done:");
-        System.out.println("   " + tasks[taskIndex]);
+        System.out.println("   " + task);
     }
 
     /**
@@ -117,10 +116,11 @@ public class Isa {
      */
     private void markTaskAsNotDone(String command) {
         int taskIndex = parseTaskIndex(command, COMMAND_UNMARK);
-        tasks[taskIndex].markAsNotDone();
+        Task task = taskList.get(taskIndex);
+        task.markAsNotDone();
 
         System.out.println(" OK, I've marked this task as not done yet:");
-        System.out.println("   " + tasks[taskIndex]);
+        System.out.println("   " + task);
     }
 
     /**
@@ -182,12 +182,11 @@ public class Isa {
      * @param task Task to add.
      */
     private void addTask(Task task) {
-        tasks[taskCount] = task;
-        taskCount++;
+        taskList.add(task);
 
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
         System.out.println(
-                " Now you have " + taskCount + " tasks in the list.");
+                " Now you have " + taskList.size() + " tasks in the list.");
     }
 }

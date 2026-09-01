@@ -1,6 +1,6 @@
 # Console UI Test Plan
 
-Program command: `java -cp src/main/java Isa`
+Program command: `java -cp out Isa`
 
 Run the tests from the repository root using the `test-ui` skill. Each test
 starts with a new in-memory task list.

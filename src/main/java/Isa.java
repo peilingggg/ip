@@ -49,8 +49,7 @@ public class Isa {
                 System.out.println("   " + tasks[taskIndex]);
             } else if (command.startsWith("todo ")) {
                 String description = command.substring(5);
-
-                tasks[taskCount] = new Task(description);
+                tasks[taskCount] = new Todo(description);
                 taskCount++;
 
                 printTaskAdded(tasks[taskCount - 1], taskCount);
@@ -61,7 +60,7 @@ public class Isa {
                 String description = parts[0];
                 String by = parts[1];
 
-                tasks[taskCount] = new Task(description, by);
+                tasks[taskCount] = new Deadline(description, by);
                 taskCount++;
 
                 printTaskAdded(tasks[taskCount - 1], taskCount);
@@ -77,7 +76,8 @@ public class Isa {
                         fromPosition + 7, toPosition);
                 String to = details.substring(toPosition + 5);
 
-                tasks[taskCount] = new Task(description, from, to);
+                tasks[taskCount] =
+                        new Event(description, from, to);
                 taskCount++;
 
                 printTaskAdded(tasks[taskCount - 1], taskCount);

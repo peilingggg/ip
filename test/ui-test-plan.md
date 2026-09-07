@@ -172,3 +172,105 @@ ____________________________________________________________
 Bye. Hope you have a nice day!
 ____________________________________________________________
 ```
+
+## Test case: Reject empty todos without changing the task list
+
+Aim: Verify that empty todo descriptions are rejected and do not add tasks,
+including when the command contains trailing spaces. Valid list operations are
+interleaved to check the task list after each invalid input.
+
+### Inputs
+```text
+todo read book
+todo
+list
+todo    
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ please enter a todo!
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] read book
+____________________________________________________________
+____________________________________________________________
+ please enter a todo!
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] read book
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
+## Test case: Reject unknown commands without changing the task list
+
+Aim: Verify that unknown commands and commands that merely begin with a known
+command name are rejected. Valid additions and list operations are interleaved
+to confirm that rejected commands do not alter existing tasks.
+
+### Inputs
+```text
+todo first task
+blah
+list
+todolist
+list
+todo second task
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] first task
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ i don't understand :((
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] first task
+____________________________________________________________
+____________________________________________________________
+ i don't understand :((
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] first task
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] second task
+ Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] first task
+ 2.[T][ ] second task
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```

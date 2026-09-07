@@ -37,9 +37,13 @@ public class Isa {
             String command = scanner.nextLine();
             System.out.println(DIVIDER);
 
-            if (!executeCommand(command)) {
-                System.out.println(DIVIDER);
-                break;
+            try {
+                if (!executeCommand(command)) {
+                    System.out.println(DIVIDER);
+                    break;
+                }
+            } catch (IsaException e) {
+                System.out.println(" " + e.getMessage());
             }
 
             System.out.println(DIVIDER);
@@ -54,7 +58,7 @@ public class Isa {
      * @param command Command entered by the user.
      * @return {@code false} when Isa should exit, or {@code true} otherwise.
      */
-    private boolean executeCommand(String command) {
+    private boolean executeCommand(String command) throws IsaException {
         if (command.equals("bye")) {
             System.out.println("Bye. Hope you have a nice day!");
             return false;
@@ -64,12 +68,14 @@ public class Isa {
             markTaskAsDone(command);
         } else if (command.startsWith(COMMAND_UNMARK)) {
             markTaskAsNotDone(command);
-        } else if (command.startsWith(COMMAND_TODO)) {
+        } else if (command.equals("todo") || command.startsWith(COMMAND_TODO)) {
             addTodo(command);
         } else if (command.startsWith(COMMAND_DEADLINE)) {
             addDeadline(command);
         } else if (command.startsWith(COMMAND_EVENT)) {
             addEvent(command);
+        } else {
+            throw new IsaException("i don't understand :((");
         }
 
         return true;
@@ -139,8 +145,13 @@ public class Isa {
      *
      * @param command Todo command entered by the user.
      */
-    private void addTodo(String command) {
-        String description = command.substring(COMMAND_TODO.length());
+    private void addTodo(String command) throws IsaException {
+        String description = command.substring("todo".length()).trim();
+
+        if (description.isEmpty()) {
+            throw new IsaException("please enter a todo!");
+        }
+
         addTask(new Todo(description));
     }
 

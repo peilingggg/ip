@@ -1,3 +1,5 @@
+package isa.exception;
+
 /**
  * Represents an invalid command entered by the user.
  */

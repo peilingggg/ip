@@ -1,3 +1,5 @@
+package isa.task;
+
 /**
  * Represents a task that occurs over a time range.
  */

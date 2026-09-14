@@ -16,6 +16,7 @@ public class Isa {
     private static final String COMMAND_EVENT = "event ";
     private static final String COMMAND_MARK = "mark ";
     private static final String COMMAND_UNMARK = "unmark ";
+    private static final String COMMAND_DELETE = "delete ";
     private static final String DEADLINE_SEPARATOR = " /by ";
     private static final String EVENT_FROM_SEPARATOR = " /from ";
     private static final String EVENT_TO_SEPARATOR = " /to ";
@@ -79,6 +80,8 @@ public class Isa {
             addDeadline(command);
         } else if (command.startsWith(COMMAND_EVENT)) {
             addEvent(command);
+        } else if (command.equals("delete") || command.startsWith(COMMAND_DELETE)) {
+            deleteTask(command);
         } else {
             throw new IsaException("i don't understand :((");
         }
@@ -202,6 +205,39 @@ public class Isa {
 
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
+        System.out.println(
+                " Now you have " + taskList.size() + " tasks in the list.");
+    }
+
+    /**
+     * Deletes the task specified by a command.
+     *
+     * @param command Delete command entered by the user.
+     * @throws IsaException If the task number is missing, invalid, or out of range.
+     */
+    private void deleteTask(String command) throws IsaException {
+        String taskNumber = command.substring("delete".length()).trim();
+
+        if (taskNumber.isEmpty()) {
+            throw new IsaException("please enter the number of the task to delete!");
+        }
+
+        int taskIndex;
+
+        try {
+            taskIndex = Integer.parseInt(taskNumber) - 1;
+        } catch (NumberFormatException e) {
+            throw new IsaException("please enter a valid task number!");
+        }
+
+        if (taskIndex < 0 || taskIndex >= taskList.size()) {
+            throw new IsaException("that task number does not exist!");
+        }
+
+        Task removedTask = taskList.remove(taskIndex);
+
+        System.out.println(" Noted. I've removed this task:");
+        System.out.println("   " + removedTask);
         System.out.println(
                 " Now you have " + taskList.size() + " tasks in the list.");
     }

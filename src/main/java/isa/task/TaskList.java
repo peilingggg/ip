@@ -1,13 +1,12 @@
 package isa.task;
 
+import java.util.ArrayList;
+
 /**
  * Stores and provides access to the user's tasks.
  */
 public class TaskList {
-    private static final int MAX_TASK_COUNT = 100;
-
-    private final Task[] tasks = new Task[MAX_TASK_COUNT];
-    private int taskCount = 0;
+    private final ArrayList<Task> tasks = new ArrayList<>();
 
     /**
      * Adds a task to the end of the list.
@@ -15,8 +14,7 @@ public class TaskList {
      * @param task Task to add.
      */
     public void add(Task task) {
-        tasks[taskCount] = task;
-        taskCount++;
+        tasks.add(task);
     }
 
     /**
@@ -26,7 +24,17 @@ public class TaskList {
      * @return Task at the specified index.
      */
     public Task get(int index) {
-        return tasks[index];
+        return tasks.get(index);
+    }
+
+    /**
+     * Removes and returns the task at a zero-based index.
+     *
+     * @param index Zero-based task index.
+     * @return Removed task.
+     */
+    public Task remove(int index) {
+        return tasks.remove(index);
     }
 
     /**
@@ -35,6 +43,6 @@ public class TaskList {
      * @return Number of stored tasks.
      */
     public int size() {
-        return taskCount;
+        return tasks.size();
     }
 }

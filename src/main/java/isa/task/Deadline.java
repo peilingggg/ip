@@ -18,6 +18,11 @@ public class Deadline extends Task {
     }
 
     @Override
+    public String toDataString() {
+        return getBaseDataString("D") + " | " + dueDate;
+    }
+
+    @Override
     public String toString() {
         return "[D]" + super.toString() + " (by: " + dueDate + ")";
     }

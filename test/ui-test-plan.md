@@ -1,6 +1,6 @@
 # Console UI Test Plan
 
-Program command: `java -cp out Isa`
+Program command: `java -cp out isa.ui.Isa`
 
 Run the tests from the repository root using the `test-ui` skill. Each test
 starts with a new in-memory task list.
@@ -18,6 +18,48 @@ bye
 ```text
 Helloo! I'm Isa
 How can I help you?
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
+## Test case: Save tasks after changes
+
+Aim: Verify that saving added and marked tasks does not change the console output.
+
+### Inputs
+```text
+todo read book
+deadline return book /by June 6th
+event project meeting /from Aug 6th 2pm /to 4pm
+mark 1
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [D][ ] return book (by: June 6th)
+ Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+ Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Nice! I've marked this task as done:
+   [T][X] read book
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope you have a nice day!

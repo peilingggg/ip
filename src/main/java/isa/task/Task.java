@@ -22,6 +22,26 @@ public class Task {
         isDone = false;
     }
 
+    /**
+     * Returns this task in the format used by the data file.
+     *
+     * @return File representation of this task.
+     */
+    public String toDataString() {
+        return getBaseDataString("T");
+    }
+
+    /**
+     * Returns the shared file data for a particular task type.
+     *
+     * @param taskType Letter representing the task type.
+     * @return Shared file representation of the task.
+     */
+    protected String getBaseDataString(String taskType) {
+        String status = isDone ? "1" : "0";
+        return taskType + " | " + status + " | " + description;
+    }
+
     @Override
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;

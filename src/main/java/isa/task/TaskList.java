@@ -6,7 +6,9 @@ import java.util.ArrayList;
  * Stores and provides access to the user's tasks.
  */
 public class TaskList {
+
     private final ArrayList<Task> tasks = new ArrayList<>();
+
 
     /**
      * Adds a task to the end of the list.

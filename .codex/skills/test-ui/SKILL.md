@@ -12,6 +12,10 @@ every test case there before testing. Each test case must contain:
 - the console commands to enter, in an `Inputs` fenced text block; and
 - the complete expected console output, in an `Expected output` fenced text block.
 
+When the plan declares a `Data file`, the runner removes it before cases that
+do not declare an `Initial data` block. For a loading test, add an `Initial
+data` fenced text block containing the exact file fixture.
+
 Run all recorded cases from the repository root:
 
 ```bash

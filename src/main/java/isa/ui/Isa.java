@@ -1,7 +1,14 @@
 package isa.ui;
 
 import isa.exception.IsaException;
-import isa.task.*;
+import isa.exception.StorageException;
+import isa.storage.LoadResult;
+import isa.storage.Storage;
+import isa.task.Deadline;
+import isa.task.Event;
+import isa.task.Task;
+import isa.task.TaskList;
+import isa.task.Todo;
 
 import java.util.Scanner;
 
@@ -9,6 +16,7 @@ import java.util.Scanner;
  * Runs the Isa task manager.
  */
 public class Isa {
+    private static final String DATA_FILE_PATH = "./data/isa.txt";
     private static final String DIVIDER =
             "____________________________________________________________";
     private static final String COMMAND_TODO = "todo ";
@@ -22,7 +30,8 @@ public class Isa {
     private static final String EVENT_TO_SEPARATOR = " /to ";
 
     private final Scanner scanner = new Scanner(System.in);
-    private final TaskList taskList = new TaskList();
+    private final Storage storage = new Storage(DATA_FILE_PATH);
+    private TaskList taskList = new TaskList();
 
     /**
      * Starts Isa and processes commands until the user exits.
@@ -38,6 +47,7 @@ public class Isa {
      */
     private void run() {
         printGreeting();
+        loadTasks();
 
         while (true) {
             String command = scanner.nextLine();
@@ -118,6 +128,7 @@ public class Isa {
         int taskIndex = parseTaskIndex(command, COMMAND_MARK);
         Task task = taskList.get(taskIndex);
         task.markAsDone();
+        saveTasks();
 
         System.out.println(" Nice! I've marked this task as done:");
         System.out.println("   " + task);
@@ -132,6 +143,7 @@ public class Isa {
         int taskIndex = parseTaskIndex(command, COMMAND_UNMARK);
         Task task = taskList.get(taskIndex);
         task.markAsNotDone();
+        saveTasks();
 
         System.out.println(" OK, I've marked this task as not done yet:");
         System.out.println("   " + task);
@@ -202,6 +214,7 @@ public class Isa {
      */
     private void addTask(Task task) {
         taskList.add(task);
+        saveTasks();
 
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
@@ -240,5 +253,31 @@ public class Isa {
         System.out.println("   " + removedTask);
         System.out.println(
                 " Now you have " + taskList.size() + " tasks in the list.");
+    }
+
+    private void loadTasks() {
+        try {
+            LoadResult loadResult = storage.load();
+            taskList = loadResult.getTaskList();
+
+            for (String warning : loadResult.getWarnings()) {
+                System.out.println(
+                        " Warning: skipped saved task on " + warning);
+            }
+        } catch (StorageException e) {
+            System.out.println(" Warning: " + e.getMessage() + ".");
+            System.out.println(" Starting with an empty task list.");
+        }
+    }
+
+    /*
+     * Saves all tasks and reports write failures without stopping Isa.
+     */
+    private void saveTasks() {
+        try {
+            storage.save(taskList);
+        } catch (StorageException e) {
+            System.out.println(" Warning: " + e.getMessage() + ".");
+        }
     }
 }

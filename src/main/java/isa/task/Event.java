@@ -21,6 +21,13 @@ public class Event extends Task {
     }
 
     @Override
+    public String toDataString() {
+        return getBaseDataString("E")
+                + " | " + escapeDataField(startTime)
+                + " | " + escapeDataField(endTime);
+    }
+
+    @Override
     public String toString() {
         return "[E]" + super.toString()
                 + " (from: " + startTime + " to: " + endTime + ")";

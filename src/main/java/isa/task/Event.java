@@ -23,8 +23,8 @@ public class Event extends Task {
     @Override
     public String toDataString() {
         return getBaseDataString("E")
-                + " | " + startTime
-                + " | " + endTime;
+                + " | " + escapeDataField(startTime)
+                + " | " + escapeDataField(endTime);
     }
 
     @Override

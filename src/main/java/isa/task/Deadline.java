@@ -19,7 +19,7 @@ public class Deadline extends Task {
 
     @Override
     public String toDataString() {
-        return getBaseDataString("D") + " | " + dueDate;
+        return getBaseDataString("D") + " | " + escapeDataField(dueDate);
     }
 
     @Override

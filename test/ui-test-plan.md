@@ -1,6 +1,7 @@
 # Console UI Test Plan
 
 Program command: `java -cp out isa.ui.Isa`
+Data file: `data/isa.txt`
 
 Run the tests from the repository root using the `test-ui` skill. Each test
 starts with a new in-memory task list.
@@ -311,6 +312,108 @@ ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] first task
  2.[T][ ] second task
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
+## Test case: Load saved tasks
+
+Aim: Verify that valid todo, deadline, and event records are restored with
+their saved completion statuses.
+
+### Initial data
+```text
+T | 1 | read book
+D | 0 | return book | June 6th
+E | 0 | project meeting | Aug 6th 2pm | 4pm
+```
+
+### Inputs
+```text
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][X] read book
+ 2.[D][ ] return book (by: June 6th)
+ 3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
+## Test case: Skip malformed saved tasks
+
+Aim: Verify that malformed records produce warnings while valid records still
+load and remain usable.
+
+### Initial data
+```text
+T | 1 | valid task
+T | 2 | wrong status
+D | 0 | missing date
+Z | 0 | unknown type
+broken
+
+```
+
+### Inputs
+```text
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+ Warning: skipped saved task on line 2: status must be 0 or 1
+ Warning: skipped saved task on line 3: expected 4 fields but found 3
+ Warning: skipped saved task on line 4: unknown task type 'Z'
+ Warning: skipped saved task on line 5: record does not contain a type and status
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][X] valid task
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
+## Test case: Load escaped task data
+
+Aim: Verify that escaped separators and backslashes are restored correctly.
+
+### Initial data
+```text
+T | 0 | use \| separator and \\ slash
+```
+
+### Inputs
+```text
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] use | separator and \ slash
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope you have a nice day!

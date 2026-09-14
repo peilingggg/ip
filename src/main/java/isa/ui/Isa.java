@@ -1,6 +1,8 @@
 package isa.ui;
 
 import isa.exception.IsaException;
+import isa.exception.StorageException;
+import isa.storage.LoadResult;
 import isa.storage.Storage;
 import isa.task.Deadline;
 import isa.task.Event;
@@ -8,7 +10,6 @@ import isa.task.Task;
 import isa.task.TaskList;
 import isa.task.Todo;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 /**
@@ -29,22 +30,23 @@ public class Isa {
 
     private final Scanner scanner = new Scanner(System.in);
     private final Storage storage = new Storage(DATA_FILE_PATH);
-    private final TaskList taskList = new TaskList();
+    private TaskList taskList = new TaskList();
 
     /**
      * Starts Isa and processes commands until the user exits.
      *
      * @param args Command-line arguments; not used.
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         new Isa().run();
     }
 
     /**
      * Runs the command-reading loop.
      */
-    private void run() throws IOException {
+    private void run() {
         printGreeting();
+        loadTasks();
 
         while (true) {
             String command = scanner.nextLine();
@@ -71,8 +73,7 @@ public class Isa {
      * @param command Command entered by the user.
      * @return {@code false} when Isa should exit, or {@code true} otherwise.
      */
-    private boolean executeCommand(String command)
-            throws IsaException, IOException {
+    private boolean executeCommand(String command) throws IsaException {
         if (command.equals("bye")) {
             System.out.println("Bye. Hope you have a nice day!");
             return false;
@@ -120,11 +121,11 @@ public class Isa {
      *
      * @param command Mark command entered by the user.
      */
-    private void markTaskAsDone(String command) throws IOException {
+    private void markTaskAsDone(String command) {
         int taskIndex = parseTaskIndex(command, COMMAND_MARK);
         Task task = taskList.get(taskIndex);
         task.markAsDone();
-        storage.save(taskList);
+        saveTasks();
 
         System.out.println(" Nice! I've marked this task as done:");
         System.out.println("   " + task);
@@ -135,11 +136,11 @@ public class Isa {
      *
      * @param command Unmark command entered by the user.
      */
-    private void markTaskAsNotDone(String command) throws IOException {
+    private void markTaskAsNotDone(String command) {
         int taskIndex = parseTaskIndex(command, COMMAND_UNMARK);
         Task task = taskList.get(taskIndex);
         task.markAsNotDone();
-        storage.save(taskList);
+        saveTasks();
 
         System.out.println(" OK, I've marked this task as not done yet:");
         System.out.println("   " + task);
@@ -161,7 +162,7 @@ public class Isa {
      *
      * @param command Todo command entered by the user.
      */
-    private void addTodo(String command) throws IsaException, IOException {
+    private void addTodo(String command) throws IsaException {
         String description = command.substring("todo".length()).trim();
 
         if (description.isEmpty()) {
@@ -176,7 +177,7 @@ public class Isa {
      *
      * @param command Deadline command entered by the user.
      */
-    private void addDeadline(String command) throws IOException {
+    private void addDeadline(String command) {
         String details = command.substring(COMMAND_DEADLINE.length());
         String[] parts = details.split(DEADLINE_SEPARATOR, 2);
         String description = parts[0];
@@ -190,7 +191,7 @@ public class Isa {
      *
      * @param command Event command entered by the user.
      */
-    private void addEvent(String command) throws IOException {
+    private void addEvent(String command) {
         String details = command.substring(COMMAND_EVENT.length());
         int fromPosition = details.indexOf(EVENT_FROM_SEPARATOR);
         int toPosition = details.indexOf(EVENT_TO_SEPARATOR);
@@ -208,13 +209,42 @@ public class Isa {
      *
      * @param task Task to add.
      */
-    private void addTask(Task task) throws IOException {
+    private void addTask(Task task) {
         taskList.add(task);
-        storage.save(taskList);
+        saveTasks();
 
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
         System.out.println(
                 " Now you have " + taskList.size() + " tasks in the list.");
+    }
+
+    /**
+     * Loads saved tasks and displays warnings for records that cannot be used.
+     */
+    private void loadTasks() {
+        try {
+            LoadResult loadResult = storage.load();
+            taskList = loadResult.getTaskList();
+
+            for (String warning : loadResult.getWarnings()) {
+                System.out.println(
+                        " Warning: skipped saved task on " + warning);
+            }
+        } catch (StorageException e) {
+            System.out.println(" Warning: " + e.getMessage() + ".");
+            System.out.println(" Starting with an empty task list.");
+        }
+    }
+
+    /**
+     * Saves all tasks and reports write failures without stopping Isa.
+     */
+    private void saveTasks() {
+        try {
+            storage.save(taskList);
+        } catch (StorageException e) {
+            System.out.println(" Warning: " + e.getMessage() + ".");
+        }
     }
 }

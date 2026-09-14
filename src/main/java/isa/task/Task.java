@@ -39,7 +39,21 @@ public class Task {
      */
     protected String getBaseDataString(String taskType) {
         String status = isDone ? "1" : "0";
-        return taskType + " | " + status + " | " + description;
+        return taskType + " | " + status + " | " + escapeDataField(description);
+    }
+
+    /**
+     * Escapes characters that have a special meaning in the data file.
+     *
+     * @param value Field value to escape.
+     * @return Escaped field value.
+     */
+    protected String escapeDataField(String value) {
+        return value
+                .replace("\\", "\\\\")
+                .replace("|", "\\|")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r");
     }
 
     @Override

@@ -419,3 +419,40 @@ ____________________________________________________________
 Bye. Hope you have a nice day!
 ____________________________________________________________
 ```
+
+## Test case: Delete and save a task
+
+Aim: Verify that deleting a task updates the displayed task list and its saved
+data.
+
+### Initial data
+```text
+T | 0 | read book
+D | 0 | return book | Friday
+```
+
+### Inputs
+```text
+delete 1
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ Noted. I've removed this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[D][ ] return book (by: Friday)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```

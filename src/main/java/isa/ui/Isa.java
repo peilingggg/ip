@@ -248,6 +248,7 @@ public class Isa {
         }
 
         Task removedTask = taskList.remove(taskIndex);
+        saveTasks();
 
         System.out.println(" Noted. I've removed this task:");
         System.out.println("   " + removedTask);

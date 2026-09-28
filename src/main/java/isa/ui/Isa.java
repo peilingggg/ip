@@ -70,6 +70,7 @@ public class Isa {
         case TODO:
         case DEADLINE:
         case EVENT:
+        case DELETE:
             Command parsedCommand = parser.createCommand(commandType, command);
             parsedCommand.execute(taskList, ui, storage);
             return !parsedCommand.isExit();
@@ -78,9 +79,6 @@ public class Isa {
             break;
         case UNMARK:
             markTaskAsNotDone(command);
-            break;
-        case DELETE:
-            deleteTask(command);
             break;
         default:
             throw new AssertionError("Unexpected command type");
@@ -115,20 +113,6 @@ public class Isa {
         saveTasks();
 
         ui.showUnmarked(task);
-    }
-
-    /**
-     * Deletes the task specified by a command.
-     *
-     * @param command Delete command entered by the user.
-     * @throws IsaException If the task number is missing, invalid, or out of range.
-     */
-    private void deleteTask(String command) throws IsaException {
-        int taskIndex = parser.parseDeleteIndex(command, taskList.size());
-        Task removedTask = taskList.remove(taskIndex);
-        saveTasks();
-
-        ui.showDeleted(removedTask, taskList.size());
     }
 
     private void loadTasks() {

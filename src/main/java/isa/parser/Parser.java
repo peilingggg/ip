@@ -2,6 +2,7 @@ package isa.parser;
 
 import isa.command.AddCommand;
 import isa.command.Command;
+import isa.command.DeleteCommand;
 import isa.command.ExitCommand;
 import isa.command.ListCommand;
 import isa.exception.IsaException;
@@ -58,12 +59,12 @@ public class Parser {
     }
 
     /**
-     * Creates a command for a recognized exit, list, or add action.
+     * Creates a command for a recognized exit, list, add, or delete action.
      *
      * @param commandType Recognized command type.
      * @param fullCommand Full command entered by the user.
      * @return Command that can execute the action.
-     * @throws IsaException If the todo description is empty.
+     * @throws IsaException If a required task argument is missing or invalid.
      */
     public Command createCommand(CommandType commandType, String fullCommand) throws IsaException {
         switch (commandType) {
@@ -77,6 +78,8 @@ public class Parser {
             return new AddCommand(parseDeadline(fullCommand));
         case EVENT:
             return new AddCommand(parseEvent(fullCommand));
+        case DELETE:
+            return new DeleteCommand(parseDeleteIndex(fullCommand));
         default:
             throw new IllegalArgumentException("No command class for " + commandType);
         }
@@ -154,14 +157,13 @@ public class Parser {
     }
 
     /**
-     * Parses and validates the task number in a delete command.
+     * Parses the task number in a delete command.
      *
      * @param command Delete command entered by the user.
-     * @param taskCount Number of tasks available for deletion.
      * @return Zero-based task index.
-     * @throws IsaException If the task number is missing, invalid, or out of range.
+     * @throws IsaException If the task number is missing or invalid.
      */
-    public int parseDeleteIndex(String command, int taskCount) throws IsaException {
+    public int parseDeleteIndex(String command) throws IsaException {
         String taskNumber = command.substring("delete".length()).trim();
 
         if (taskNumber.isEmpty()) {
@@ -174,10 +176,6 @@ public class Parser {
             taskIndex = Integer.parseInt(taskNumber) - 1;
         } catch (NumberFormatException e) {
             throw new IsaException("please enter a valid task number!");
-        }
-
-        if (taskIndex < 0 || taskIndex >= taskCount) {
-            throw new IsaException("that task number does not exist!");
         }
 
         return taskIndex;

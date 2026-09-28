@@ -1,5 +1,6 @@
 package isa.command;
 
+import isa.exception.IsaException;
 import isa.storage.Storage;
 import isa.task.TaskList;
 import isa.ui.Ui;
@@ -14,8 +15,9 @@ public abstract class Command {
      * @param tasks Current task list.
      * @param ui Console interface.
      * @param storage Task storage.
+     * @throws IsaException If the command cannot be applied to the task list.
      */
-    public abstract void execute(TaskList tasks, Ui ui, Storage storage);
+    public abstract void execute(TaskList tasks, Ui ui, Storage storage) throws IsaException;
 
     /**
      * Indicates whether this command ends the application.

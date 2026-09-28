@@ -3,6 +3,7 @@ package isa.task;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.Locale;
 
@@ -28,6 +29,8 @@ public class Event extends Task {
      *
      * @param value Date and time in yyyy-MM-ddTHH:mm format.
      * @return Parsed date and time.
+     * @throws DateTimeParseException If the value is not a valid date and time
+     *         in the required format.
      */
     public static LocalDateTime parseTime(String value) {
         return LocalDateTime.parse(value, INPUT_FORMAT);
@@ -39,6 +42,7 @@ public class Event extends Task {
      * @param description Description of the event.
      * @param startTime Date and time at which the event starts.
      * @param endTime Date and time at which the event ends.
+     * @throws IllegalArgumentException If the end time is before the start time.
      */
     public Event(String description, LocalDateTime startTime, LocalDateTime endTime) {
         super(description);

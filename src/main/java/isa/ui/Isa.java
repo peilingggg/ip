@@ -2,6 +2,7 @@ package isa.ui;
 
 import isa.command.Command;
 import isa.command.ExitCommand;
+import isa.command.ListCommand;
 import isa.exception.IsaException;
 import isa.exception.StorageException;
 import isa.parser.Parser;
@@ -68,8 +69,9 @@ public class Isa {
             exitCommand.execute(taskList, ui, storage);
             return !exitCommand.isExit();
         case LIST:
-            ui.showTasks(taskList);
-            break;
+            Command listCommand = new ListCommand();
+            listCommand.execute(taskList, ui, storage);
+            return !listCommand.isExit();
         case MARK:
             markTaskAsDone(command);
             break;

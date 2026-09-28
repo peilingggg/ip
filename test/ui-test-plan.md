@@ -431,6 +431,56 @@ Bye. Hope you have a nice day!
 ____________________________________________________________
 ```
 
+## Test case: Find a phrase without renumbering tasks
+
+Aim: Verify that a mixed-case phrase matches a substring of the description
+and the result retains its number from the full task list.
+
+### Inputs
+```text
+todo buy groceries
+todo join the CS book club
+todo run errands
+find BoOk ClUb
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] buy groceries
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] join the CS book club
+ Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] run errands
+ Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Here are the matching tasks in your list:
+ 2.[T][ ] join the CS book club
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] buy groceries
+ 2.[T][ ] join the CS book club
+ 3.[T][ ] run errands
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
 ## Test case: Reject empty todos without changing the task list
 
 Aim: Verify that empty todo descriptions are rejected and do not add tasks,

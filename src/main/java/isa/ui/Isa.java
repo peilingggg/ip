@@ -67,17 +67,15 @@ public class Isa {
         switch (commandType) {
         case BYE:
         case LIST:
-            Command simpleCommand = parser.createSimpleCommand(commandType);
-            simpleCommand.execute(taskList, ui, storage);
-            return !simpleCommand.isExit();
+        case TODO:
+            Command parsedCommand = parser.createCommand(commandType, command);
+            parsedCommand.execute(taskList, ui, storage);
+            return !parsedCommand.isExit();
         case MARK:
             markTaskAsDone(command);
             break;
         case UNMARK:
             markTaskAsNotDone(command);
-            break;
-        case TODO:
-            addTask(parser.parseTodo(command));
             break;
         case DEADLINE:
             addTask(parser.parseDeadline(command));

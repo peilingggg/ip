@@ -1,5 +1,6 @@
 package isa.parser;
 
+import isa.command.AddCommand;
 import isa.command.Command;
 import isa.command.ExitCommand;
 import isa.command.ListCommand;
@@ -57,17 +58,21 @@ public class Parser {
     }
 
     /**
-     * Creates a command for a recognized exit or list action.
+     * Creates a command for a recognized exit, list, or todo action.
      *
      * @param commandType Recognized command type.
+     * @param fullCommand Full command entered by the user.
      * @return Command that can execute the action.
+     * @throws IsaException If the todo description is empty.
      */
-    public Command createSimpleCommand(CommandType commandType) {
+    public Command createCommand(CommandType commandType, String fullCommand) throws IsaException {
         switch (commandType) {
         case BYE:
             return new ExitCommand();
         case LIST:
             return new ListCommand();
+        case TODO:
+            return new AddCommand(parseTodo(fullCommand));
         default:
             throw new IllegalArgumentException("No command class for " + commandType);
         }

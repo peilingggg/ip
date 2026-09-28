@@ -1,6 +1,8 @@
 package isa.task;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Stores and provides access to the user's tasks.
@@ -46,5 +48,26 @@ public class TaskList {
      */
     public int size() {
         return tasks.size();
+    }
+
+    /**
+     * Finds tasks whose descriptions contain a keyword, ignoring case.
+     *
+     * @param keyword Text to find in task descriptions.
+     * @return Zero-based indices of matching tasks in the full list.
+     */
+    public List<Integer> findMatchingIndices(String keyword) {
+        List<Integer> matches = new ArrayList<>();
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+
+        for (int i = 0; i < tasks.size(); i++) {
+            String description = tasks.get(i).getDescription().toLowerCase(Locale.ROOT);
+
+            if (description.contains(normalizedKeyword)) {
+                matches.add(i);
+            }
+        }
+
+        return matches;
     }
 }

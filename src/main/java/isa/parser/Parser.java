@@ -4,6 +4,7 @@ import isa.command.AddCommand;
 import isa.command.Command;
 import isa.command.DeleteCommand;
 import isa.command.ExitCommand;
+import isa.command.FindCommand;
 import isa.command.ListCommand;
 import isa.command.MarkCommand;
 import isa.command.OnDateCommand;
@@ -54,6 +55,8 @@ public class Parser {
             return new DeleteCommand(parseDeleteIndex(command));
         } else if (command.equals("on") || command.startsWith("on ")) {
             return parseOnDate(command);
+        } else if (command.equals("find") || command.startsWith("find ")) {
+            return parseFind(command);
         } else {
             throw new IsaException("i don't understand :((");
         }
@@ -171,6 +174,23 @@ public class Parser {
         } catch (DateTimeParseException e) {
             throw new IsaException("enter a valid date in yyyy-MM-dd format");
         }
+    }
+
+    /**
+     * Parses a keyword search command.
+     *
+     * @param command Find command entered by the user.
+     * @return Command that lists matching tasks.
+     * @throws IsaException If no keyword was provided.
+     */
+    public FindCommand parseFind(String command) throws IsaException {
+        String keyword = command.substring("find".length()).trim();
+
+        if (keyword.isEmpty()) {
+            throw new IsaException("please enter a keyword to find!");
+        }
+
+        return new FindCommand(keyword);
     }
 
     /**

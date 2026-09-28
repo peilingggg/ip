@@ -5,6 +5,7 @@ import isa.task.TaskList;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -70,6 +71,24 @@ public class Ui {
 
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println(" " + (i + 1) + "." + tasks.get(i));
+        }
+    }
+
+    /**
+     * Prints matching tasks with their numbers in the complete task list.
+     *
+     * @param tasks Full task list.
+     * @param matches Zero-based indices of matching tasks.
+     */
+    public void showMatchingTasks(TaskList tasks, List<Integer> matches) {
+        System.out.println(" Here are the matching tasks in your list:");
+
+        if (matches.isEmpty()) {
+            System.out.println(" No matching tasks found.");
+        }
+
+        for (int index : matches) {
+            System.out.println(" " + (index + 1) + "." + tasks.get(index));
         }
     }
 

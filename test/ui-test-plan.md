@@ -341,6 +341,96 @@ Bye. Hope you have a nice day!
 ____________________________________________________________
 ```
 
+## Test case: Find tasks by description
+
+Aim: Verify that search ignores case, keeps original task numbers, ignores date
+fields, and does not change the task list.
+
+### Inputs
+```text
+todo read book
+todo buy pens
+deadline return BOOK /by 2019-10-15
+find bOoK
+find 2019
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] buy pens
+ Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [D][ ] return BOOK (by: Oct 15 2019)
+ Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Here are the matching tasks in your list:
+ 1.[T][ ] read book
+ 3.[D][ ] return BOOK (by: Oct 15 2019)
+____________________________________________________________
+____________________________________________________________
+ Here are the matching tasks in your list:
+ No matching tasks found.
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] read book
+ 2.[T][ ] buy pens
+ 3.[D][ ] return BOOK (by: Oct 15 2019)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
+## Test case: Reject find without a keyword
+
+Aim: Verify that a missing keyword reports an error and leaves the list intact.
+
+### Inputs
+```text
+todo read book
+find
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ please enter a keyword to find!
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] read book
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
 ## Test case: Reject empty todos without changing the task list
 
 Aim: Verify that empty todo descriptions are rejected and do not add tasks,

@@ -5,6 +5,7 @@ import isa.command.Command;
 import isa.command.DeleteCommand;
 import isa.command.ExitCommand;
 import isa.command.ListCommand;
+import isa.command.MarkCommand;
 import isa.exception.IsaException;
 import isa.task.Deadline;
 import isa.task.Event;
@@ -59,7 +60,7 @@ public class Parser {
     }
 
     /**
-     * Creates a command for a recognized exit, list, add, or delete action.
+     * Creates a command for a recognized user action.
      *
      * @param commandType Recognized command type.
      * @param fullCommand Full command entered by the user.
@@ -80,6 +81,10 @@ public class Parser {
             return new AddCommand(parseEvent(fullCommand));
         case DELETE:
             return new DeleteCommand(parseDeleteIndex(fullCommand));
+        case MARK:
+            return new MarkCommand(parseMarkIndex(fullCommand), true);
+        case UNMARK:
+            return new MarkCommand(parseUnmarkIndex(fullCommand), false);
         default:
             throw new IllegalArgumentException("No command class for " + commandType);
         }

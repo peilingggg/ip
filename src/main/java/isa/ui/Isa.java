@@ -4,10 +4,8 @@ import isa.command.Command;
 import isa.exception.IsaException;
 import isa.exception.StorageException;
 import isa.parser.Parser;
-import isa.parser.Parser.CommandType;
 import isa.storage.LoadResult;
 import isa.storage.Storage;
-import isa.task.Task;
 import isa.task.TaskList;
 
 /**
@@ -62,57 +60,9 @@ public class Isa {
      * @return {@code false} when Isa should exit, or {@code true} otherwise.
      */
     private boolean executeCommand(String command) throws IsaException {
-        CommandType commandType = parser.parseCommand(command);
-
-        switch (commandType) {
-        case BYE:
-        case LIST:
-        case TODO:
-        case DEADLINE:
-        case EVENT:
-        case DELETE:
-            Command parsedCommand = parser.createCommand(commandType, command);
-            parsedCommand.execute(taskList, ui, storage);
-            return !parsedCommand.isExit();
-        case MARK:
-            markTaskAsDone(command);
-            break;
-        case UNMARK:
-            markTaskAsNotDone(command);
-            break;
-        default:
-            throw new AssertionError("Unexpected command type");
-        }
-
-        return true;
-    }
-
-    /**
-     * Marks the task specified by a command as done.
-     *
-     * @param command Mark command entered by the user.
-     */
-    private void markTaskAsDone(String command) {
-        int taskIndex = parser.parseMarkIndex(command);
-        Task task = taskList.get(taskIndex);
-        task.markAsDone();
-        saveTasks();
-
-        ui.showMarked(task);
-    }
-
-    /**
-     * Marks the task specified by a command as not done.
-     *
-     * @param command Unmark command entered by the user.
-     */
-    private void markTaskAsNotDone(String command) {
-        int taskIndex = parser.parseUnmarkIndex(command);
-        Task task = taskList.get(taskIndex);
-        task.markAsNotDone();
-        saveTasks();
-
-        ui.showUnmarked(task);
+        Command parsedCommand = parser.createCommand(parser.parseCommand(command), command);
+        parsedCommand.execute(taskList, ui, storage);
+        return !parsedCommand.isExit();
     }
 
     private void loadTasks() {
@@ -125,17 +75,6 @@ public class Isa {
             }
         } catch (StorageException e) {
             ui.showLoadError(e.getMessage());
-        }
-    }
-
-    /*
-     * Saves all tasks and reports write failures without stopping Isa.
-     */
-    private void saveTasks() {
-        try {
-            storage.save(taskList);
-        } catch (StorageException e) {
-            ui.showSaveWarning(e.getMessage());
         }
     }
 }

@@ -75,7 +75,7 @@ public class Isa {
             ui.showGoodbye();
             return false;
         } else if (command.equals("list")) {
-            printTasks();
+            ui.showTasks(taskList);
         } else if (command.startsWith(COMMAND_MARK)) {
             markTaskAsDone(command);
         } else if (command.startsWith(COMMAND_UNMARK)) {
@@ -96,17 +96,6 @@ public class Isa {
     }
 
     /**
-     * Prints all tasks in their current order.
-     */
-    private void printTasks() {
-        System.out.println(" Here are the tasks in your list:");
-
-        for (int i = 0; i < taskList.size(); i++) {
-            System.out.println(" " + (i + 1) + "." + taskList.get(i));
-        }
-    }
-
-    /**
      * Marks the task specified by a command as done.
      *
      * @param command Mark command entered by the user.
@@ -117,8 +106,7 @@ public class Isa {
         task.markAsDone();
         saveTasks();
 
-        System.out.println(" Nice! I've marked this task as done:");
-        System.out.println("   " + task);
+        ui.showMarked(task);
     }
 
     /**
@@ -132,8 +120,7 @@ public class Isa {
         task.markAsNotDone();
         saveTasks();
 
-        System.out.println(" OK, I've marked this task as not done yet:");
-        System.out.println("   " + task);
+        ui.showUnmarked(task);
     }
 
     /**
@@ -203,10 +190,7 @@ public class Isa {
         taskList.add(task);
         saveTasks();
 
-        System.out.println(" Got it. I've added this task:");
-        System.out.println("   " + task);
-        System.out.println(
-                " Now you have " + taskList.size() + " tasks in the list.");
+        ui.showAdded(task, taskList.size());
     }
 
     /**
@@ -237,10 +221,7 @@ public class Isa {
         Task removedTask = taskList.remove(taskIndex);
         saveTasks();
 
-        System.out.println(" Noted. I've removed this task:");
-        System.out.println("   " + removedTask);
-        System.out.println(
-                " Now you have " + taskList.size() + " tasks in the list.");
+        ui.showDeleted(removedTask, taskList.size());
     }
 
     private void loadTasks() {
@@ -249,12 +230,10 @@ public class Isa {
             taskList = loadResult.getTaskList();
 
             for (String warning : loadResult.getWarnings()) {
-                System.out.println(
-                        " Warning: skipped saved task on " + warning);
+                ui.showLoadWarning(warning);
             }
         } catch (StorageException e) {
-            System.out.println(" Warning: " + e.getMessage() + ".");
-            System.out.println(" Starting with an empty task list.");
+            ui.showLoadError(e.getMessage());
         }
     }
 
@@ -265,7 +244,7 @@ public class Isa {
         try {
             storage.save(taskList);
         } catch (StorageException e) {
-            System.out.println(" Warning: " + e.getMessage() + ".");
+            ui.showSaveWarning(e.getMessage());
         }
     }
 }

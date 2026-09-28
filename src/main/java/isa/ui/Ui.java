@@ -1,9 +1,12 @@
 package isa.ui;
 
+import isa.task.Task;
+import isa.task.TaskList;
+
 import java.util.Scanner;
 
 /**
- * Handles console input and common messages shown to the user.
+ * Handles console input and messages shown to the user.
  */
 public class Ui {
     private static final String DIVIDER =
@@ -50,6 +53,91 @@ public class Ui {
      */
     public void showGoodbye() {
         System.out.println("Bye. Hope you have a nice day!");
+    }
+
+    /**
+     * Prints tasks in their current order.
+     *
+     * @param tasks Tasks to display.
+     */
+    public void showTasks(TaskList tasks) {
+        System.out.println(" Here are the tasks in your list:");
+
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println(" " + (i + 1) + "." + tasks.get(i));
+        }
+    }
+
+    /**
+     * Acknowledges a task marked as done.
+     *
+     * @param task Task that was marked.
+     */
+    public void showMarked(Task task) {
+        System.out.println(" Nice! I've marked this task as done:");
+        System.out.println("   " + task);
+    }
+
+    /**
+     * Acknowledges a task marked as not done.
+     *
+     * @param task Task that was unmarked.
+     */
+    public void showUnmarked(Task task) {
+        System.out.println(" OK, I've marked this task as not done yet:");
+        System.out.println("   " + task);
+    }
+
+    /**
+     * Acknowledges an added task and the new list size.
+     *
+     * @param task Added task.
+     * @param taskCount Number of tasks after the addition.
+     */
+    public void showAdded(Task task, int taskCount) {
+        System.out.println(" Got it. I've added this task:");
+        System.out.println("   " + task);
+        System.out.println(" Now you have " + taskCount + " tasks in the list.");
+    }
+
+    /**
+     * Acknowledges a deleted task and the new list size.
+     *
+     * @param task Deleted task.
+     * @param taskCount Number of tasks after deletion.
+     */
+    public void showDeleted(Task task, int taskCount) {
+        System.out.println(" Noted. I've removed this task:");
+        System.out.println("   " + task);
+        System.out.println(" Now you have " + taskCount + " tasks in the list.");
+    }
+
+    /**
+     * Reports a saved task that could not be loaded.
+     *
+     * @param warning Location and reason for the skipped task.
+     */
+    public void showLoadWarning(String warning) {
+        System.out.println(" Warning: skipped saved task on " + warning);
+    }
+
+    /**
+     * Reports a failure to load the task list.
+     *
+     * @param message Storage error message.
+     */
+    public void showLoadError(String message) {
+        System.out.println(" Warning: " + message + ".");
+        System.out.println(" Starting with an empty task list.");
+    }
+
+    /**
+     * Reports a failure to save the task list.
+     *
+     * @param message Storage error message.
+     */
+    public void showSaveWarning(String message) {
+        System.out.println(" Warning: " + message + ".");
     }
 
     /**

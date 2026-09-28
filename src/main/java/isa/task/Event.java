@@ -13,8 +13,12 @@ public class Event extends Task {
     private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter
             .ofPattern("uuuu-MM-dd'T'HH:mm")
             .withResolverStyle(ResolverStyle.STRICT);
-    private static final DateTimeFormatter DISPLAY_FORMAT =
-            DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm", Locale.ENGLISH);
+    private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
+    private static final DateTimeFormatter DISPLAY_HOUR_FORMAT =
+            DateTimeFormatter.ofPattern("h", Locale.ENGLISH);
+    private static final DateTimeFormatter DISPLAY_HOUR_MINUTE_FORMAT =
+            DateTimeFormatter.ofPattern("h:mm", Locale.ENGLISH);
 
     private final LocalDateTime startTime;
     private final LocalDateTime endTime;
@@ -58,6 +62,21 @@ public class Event extends Task {
                 && !date.isAfter(endTime.toLocalDate());
     }
 
+    /**
+     * Formats an event endpoint as a date with a 12-hour time.
+     *
+     * @param dateTime Endpoint to display.
+     * @return Readable date and time, such as Aug 06 2026 2pm.
+     */
+    private String formatForDisplay(LocalDateTime dateTime) {
+        DateTimeFormatter timeFormat = dateTime.getMinute() == 0
+                ? DISPLAY_HOUR_FORMAT : DISPLAY_HOUR_MINUTE_FORMAT;
+        String period = dateTime.getHour() < 12 ? "am" : "pm";
+
+        return dateTime.format(DISPLAY_DATE_FORMAT) + " "
+                + dateTime.format(timeFormat) + period;
+    }
+
     @Override
     public String toDataString() {
         return getBaseDataString("E")
@@ -68,7 +87,7 @@ public class Event extends Task {
     @Override
     public String toString() {
         return "[E]" + super.toString()
-                + " (from: " + startTime.format(DISPLAY_FORMAT)
-                + " to: " + endTime.format(DISPLAY_FORMAT) + ")";
+                + " (from: " + formatForDisplay(startTime)
+                + " to: " + formatForDisplay(endTime) + ")";
     }
 }

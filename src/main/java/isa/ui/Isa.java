@@ -2,6 +2,7 @@ package isa.ui;
 
 import isa.exception.IsaException;
 import isa.exception.StorageException;
+import isa.parser.Parser;
 import isa.storage.LoadResult;
 import isa.storage.Storage;
 import isa.task.Deadline;
@@ -15,7 +16,6 @@ import isa.task.Todo;
  */
 public class Isa {
     private static final String DATA_FILE_PATH = "./data/isa.txt";
-    private static final String COMMAND_TODO = "todo ";
     private static final String COMMAND_DEADLINE = "deadline ";
     private static final String COMMAND_EVENT = "event ";
     private static final String COMMAND_MARK = "mark ";
@@ -26,6 +26,7 @@ public class Isa {
     private static final String EVENT_TO_SEPARATOR = " /to ";
 
     private final Ui ui = new Ui();
+    private final Parser parser = new Parser();
     private final Storage storage = new Storage(DATA_FILE_PATH);
     private TaskList taskList = new TaskList();
 
@@ -71,25 +72,33 @@ public class Isa {
      * @return {@code false} when Isa should exit, or {@code true} otherwise.
      */
     private boolean executeCommand(String command) throws IsaException {
-        if (command.equals("bye")) {
+        switch (parser.parseCommand(command)) {
+        case BYE:
             ui.showGoodbye();
             return false;
-        } else if (command.equals("list")) {
+        case LIST:
             ui.showTasks(taskList);
-        } else if (command.startsWith(COMMAND_MARK)) {
+            break;
+        case MARK:
             markTaskAsDone(command);
-        } else if (command.startsWith(COMMAND_UNMARK)) {
+            break;
+        case UNMARK:
             markTaskAsNotDone(command);
-        } else if (command.equals("todo") || command.startsWith(COMMAND_TODO)) {
+            break;
+        case TODO:
             addTodo(command);
-        } else if (command.startsWith(COMMAND_DEADLINE)) {
+            break;
+        case DEADLINE:
             addDeadline(command);
-        } else if (command.startsWith(COMMAND_EVENT)) {
+            break;
+        case EVENT:
             addEvent(command);
-        } else if (command.equals("delete") || command.startsWith(COMMAND_DELETE)) {
+            break;
+        case DELETE:
             deleteTask(command);
-        } else {
-            throw new IsaException("i don't understand :((");
+            break;
+        default:
+            throw new AssertionError("Unexpected command type");
         }
 
         return true;

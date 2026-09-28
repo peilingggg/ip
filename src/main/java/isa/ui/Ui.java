@@ -3,6 +3,9 @@ package isa.ui;
 import isa.task.Task;
 import isa.task.TaskList;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Scanner;
 
 /**
@@ -11,6 +14,8 @@ import java.util.Scanner;
 public class Ui {
     private static final String DIVIDER =
             "____________________________________________________________";
+    private static final DateTimeFormatter DATE_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
 
     private final Scanner scanner = new Scanner(System.in);
 
@@ -66,6 +71,32 @@ public class Ui {
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println(" " + (i + 1) + "." + tasks.get(i));
         }
+    }
+
+    /**
+     * Prints the heading for deadlines and events occurring on a date.
+     *
+     * @param date Date being listed.
+     */
+    public void showOnDateHeader(LocalDate date) {
+        System.out.println(" Tasks on " + date.format(DATE_FORMAT) + ":");
+    }
+
+    /**
+     * Prints a matching task with its number in the complete task list.
+     *
+     * @param taskNumber One-based task number.
+     * @param task Task occurring on the date.
+     */
+    public void showTaskOnDate(int taskNumber, Task task) {
+        System.out.println(" " + taskNumber + "." + task);
+    }
+
+    /**
+     * Reports when no deadlines or events occur on the selected date.
+     */
+    public void showNoTasksOnDate() {
+        System.out.println(" No deadlines or events on this date.");
     }
 
     /**

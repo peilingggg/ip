@@ -6,12 +6,14 @@ import isa.command.DeleteCommand;
 import isa.command.ExitCommand;
 import isa.command.ListCommand;
 import isa.command.MarkCommand;
+import isa.command.OnDateCommand;
 import isa.exception.IsaException;
 import isa.task.Deadline;
 import isa.task.Event;
 import isa.task.Todo;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
 /**
@@ -50,6 +52,8 @@ public class Parser {
             return new AddCommand(parseEvent(command));
         } else if (command.equals("delete") || command.startsWith("delete ")) {
             return new DeleteCommand(parseDeleteIndex(command));
+        } else if (command.equals("on") || command.startsWith("on ")) {
+            return parseOnDate(command);
         } else {
             throw new IsaException("i don't understand :((");
         }
@@ -120,18 +124,53 @@ public class Parser {
      *
      * @param command Event command entered by the user.
      * @return Parsed event task.
+     * @throws IsaException If the event times are missing, malformed, or out of order.
      */
-    public Event parseEvent(String command) {
+    public Event parseEvent(String command) throws IsaException {
         String details = command.substring(COMMAND_EVENT.length());
         int fromPosition = details.indexOf(EVENT_FROM_SEPARATOR);
         int toPosition = details.indexOf(EVENT_TO_SEPARATOR);
-        String description = details.substring(0, fromPosition);
-        String startTime = details.substring(
-                fromPosition + EVENT_FROM_SEPARATOR.length(), toPosition);
-        String endTime = details.substring(
-                toPosition + EVENT_TO_SEPARATOR.length());
 
-        return new Event(description, startTime, endTime);
+        if (fromPosition < 0 || details.substring(0, fromPosition).isBlank()
+                || toPosition <= fromPosition + EVENT_FROM_SEPARATOR.length()) {
+            throw new IsaException("use event DESCRIPTION /from yyyy-MM-ddTHH:mm /to yyyy-MM-ddTHH:mm");
+        }
+
+        String description = details.substring(0, fromPosition);
+        String startText = details.substring(
+                fromPosition + EVENT_FROM_SEPARATOR.length(), toPosition).trim();
+        String endText = details.substring(toPosition + EVENT_TO_SEPARATOR.length()).trim();
+
+        if (startText.isEmpty() || endText.isEmpty()) {
+            throw new IsaException("use event DESCRIPTION /from yyyy-MM-ddTHH:mm /to yyyy-MM-ddTHH:mm");
+        }
+
+        try {
+            LocalDateTime startTime = Event.parseTime(startText);
+            LocalDateTime endTime = Event.parseTime(endText);
+            return new Event(description, startTime, endTime);
+        } catch (DateTimeParseException e) {
+            throw new IsaException("enter event times in yyyy-MM-ddTHH:mm format");
+        } catch (IllegalArgumentException e) {
+            throw new IsaException(e.getMessage());
+        }
+    }
+
+    /**
+     * Parses the date whose deadlines and events should be shown.
+     *
+     * @param command On-date command entered by the user.
+     * @return Command that lists tasks on the date.
+     * @throws IsaException If the date is missing or invalid.
+     */
+    public OnDateCommand parseOnDate(String command) throws IsaException {
+        String dateText = command.substring("on".length()).trim();
+
+        try {
+            return new OnDateCommand(LocalDate.parse(dateText));
+        } catch (DateTimeParseException e) {
+            throw new IsaException("enter a valid date in yyyy-MM-dd format");
+        }
     }
 
     /**

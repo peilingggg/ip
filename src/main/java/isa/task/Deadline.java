@@ -24,6 +24,15 @@ public class Deadline extends Task {
         this.dueDate = dueDate;
     }
 
+    /**
+     * Returns the date by which this task is due.
+     *
+     * @return Due date of the task.
+     */
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
     @Override
     public String toDataString() {
         return getBaseDataString("D") + " | " + dueDate;

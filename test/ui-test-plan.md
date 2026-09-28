@@ -33,7 +33,7 @@ Aim: Verify that saving added and marked tasks does not change the console outpu
 ```text
 todo read book
 deadline return book /by 2019-10-15
-event project meeting /from Aug 6th 2pm /to 4pm
+event project meeting /from 2026-08-06T14:00 /to 2026-08-06T16:00
 mark 1
 bye
 ```
@@ -55,7 +55,7 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+   [E][ ] project meeting (from: Aug 06 2026 14:00 to: Aug 06 2026 16:00)
  Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -188,11 +188,11 @@ ____________________________________________________________
 
 ## Test case: Add an event
 
-Aim: Verify that an event stores and displays its `/from` and `/to` values.
+Aim: Verify that an event stores ISO date-times and displays both endpoints.
 
 ### Inputs
 ```text
-event project meeting /from Mon 2pm /to 4pm
+event project meeting /from 2026-08-06T14:00 /to 2026-08-06T16:00
 list
 bye
 ```
@@ -204,12 +204,137 @@ How can I help you?
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [E][ ] project meeting (from: Mon 2pm to: 4pm)
+   [E][ ] project meeting (from: Aug 06 2026 14:00 to: Aug 06 2026 16:00)
  Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
- 1.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+ 1.[E][ ] project meeting (from: Aug 06 2026 14:00 to: Aug 06 2026 16:00)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
+## Test case: List deadlines and events on a date
+
+Aim: Verify that a multi-day event appears on both dates, a deadline appears
+only on its due date, and task numbers still refer to the full list.
+
+### Inputs
+```text
+todo read book
+event conference /from 2026-08-06T23:00 /to 2026-08-07T01:00
+deadline submit work /by 2026-08-07
+on 2026-08-06
+on 2026-08-07
+on 2026-08-08
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [E][ ] conference (from: Aug 06 2026 23:00 to: Aug 07 2026 01:00)
+ Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [D][ ] submit work (by: Aug 07 2026)
+ Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Tasks on Aug 06 2026:
+ 2.[E][ ] conference (from: Aug 06 2026 23:00 to: Aug 07 2026 01:00)
+____________________________________________________________
+____________________________________________________________
+ Tasks on Aug 07 2026:
+ 2.[E][ ] conference (from: Aug 06 2026 23:00 to: Aug 07 2026 01:00)
+ 3.[D][ ] submit work (by: Aug 07 2026)
+____________________________________________________________
+____________________________________________________________
+ Tasks on Aug 08 2026:
+ No deadlines or events on this date.
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
+## Test case: Reject invalid event times without changing tasks
+
+Aim: Verify that malformed times, reversed ranges, and missing fields report
+errors while the existing list remains intact.
+
+### Inputs
+```text
+todo read book
+event meeting /from Mon 2pm /to 4pm
+event meeting /from 2026-08-07T16:00 /to 2026-08-07T14:00
+event meeting /from 2026-08-07T14:00 /to
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ enter event times in yyyy-MM-ddTHH:mm format
+____________________________________________________________
+____________________________________________________________
+ event end time must not be before start time
+____________________________________________________________
+____________________________________________________________
+ use event DESCRIPTION /from yyyy-MM-ddTHH:mm /to yyyy-MM-ddTHH:mm
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] read book
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
+## Test case: Reject an invalid date lookup
+
+Aim: Verify that a malformed on-date command reports an error and later
+commands still work.
+
+### Inputs
+```text
+on 2026-02-30
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ enter a valid date in yyyy-MM-dd format
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope you have a nice day!
@@ -370,7 +495,7 @@ their saved completion statuses.
 ```text
 T | 1 | read book
 D | 0 | return book | 2019-10-15
-E | 0 | project meeting | Aug 6th 2pm | 4pm
+E | 0 | project meeting | 2026-08-06T14:00 | 2026-08-06T16:00
 ```
 
 ### Inputs
@@ -388,7 +513,7 @@ ____________________________________________________________
  Here are the tasks in your list:
  1.[T][X] read book
  2.[D][ ] return book (by: Oct 15 2019)
- 3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+ 3.[E][ ] project meeting (from: Aug 06 2026 14:00 to: Aug 06 2026 16:00)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope you have a nice day!
@@ -422,6 +547,40 @@ ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] read book
  2.[D][X] finish homework (by: Feb 29 2020)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
+## Test case: Skip legacy and reversed saved events
+
+Aim: Verify that invalid saved event times produce warnings while valid tasks
+remain available.
+
+### Initial data
+```text
+E | 0 | old meeting | Monday 2pm | 4pm
+E | 0 | reversed meeting | 2026-08-07T16:00 | 2026-08-07T14:00
+E | 1 | valid meeting | 2026-08-06T14:00 | 2026-08-06T16:00
+```
+
+### Inputs
+```text
+on 2026-08-06
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+ Warning: skipped saved task on line 1: invalid event time; use yyyy-MM-ddTHH:mm
+ Warning: skipped saved task on line 2: event end time must not be before start time
+____________________________________________________________
+ Tasks on Aug 06 2026:
+ 1.[E][X] valid meeting (from: Aug 06 2026 14:00 to: Aug 06 2026 16:00)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope you have a nice day!

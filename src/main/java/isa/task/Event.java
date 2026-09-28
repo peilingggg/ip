@@ -1,35 +1,74 @@
 package isa.task;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
+import java.util.Locale;
+
 /**
  * Represents a task that occurs over a time range.
  */
 public class Event extends Task {
-    private final String startTime;
-    private final String endTime;
+    private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter
+            .ofPattern("uuuu-MM-dd'T'HH:mm")
+            .withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter DISPLAY_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm", Locale.ENGLISH);
+
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
+
+    /**
+     * Parses an event time in the required input format.
+     *
+     * @param value Date and time in yyyy-MM-ddTHH:mm format.
+     * @return Parsed date and time.
+     */
+    public static LocalDateTime parseTime(String value) {
+        return LocalDateTime.parse(value, INPUT_FORMAT);
+    }
 
     /**
      * Creates an event with its description and time range.
      *
      * @param description Description of the event.
-     * @param startTime Time at which the event starts.
-     * @param endTime Time at which the event ends.
+     * @param startTime Date and time at which the event starts.
+     * @param endTime Date and time at which the event ends.
      */
-    public Event(String description, String startTime, String endTime) {
+    public Event(String description, LocalDateTime startTime, LocalDateTime endTime) {
         super(description);
+
+        if (endTime.isBefore(startTime)) {
+            throw new IllegalArgumentException("event end time must not be before start time");
+        }
+
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    /**
+     * Checks whether this event occurs on a given date, including either endpoint.
+     *
+     * @param date Date to check.
+     * @return Whether the event spans the date.
+     */
+    public boolean occursOn(LocalDate date) {
+        return !date.isBefore(startTime.toLocalDate())
+                && !date.isAfter(endTime.toLocalDate());
     }
 
     @Override
     public String toDataString() {
         return getBaseDataString("E")
-                + " | " + escapeDataField(startTime)
-                + " | " + escapeDataField(endTime);
+                + " | " + startTime.format(INPUT_FORMAT)
+                + " | " + endTime.format(INPUT_FORMAT);
     }
 
     @Override
     public String toString() {
         return "[E]" + super.toString()
-                + " (from: " + startTime + " to: " + endTime + ")";
+                + " (from: " + startTime.format(DISPLAY_FORMAT)
+                + " to: " + endTime.format(DISPLAY_FORMAT) + ")";
     }
 }

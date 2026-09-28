@@ -126,10 +126,18 @@ public class Storage {
             break;
         case "E":
             requireFieldCount(fields, 5);
-            task = new Event(
-                    requireNonEmpty(fields.get(2), "description"),
-                    requireNonEmpty(fields.get(3), "start time"),
-                    requireNonEmpty(fields.get(4), "end time"));
+            String eventDescription = requireNonEmpty(fields.get(2), "description");
+            String startText = requireNonEmpty(fields.get(3), "start time");
+            String endText = requireNonEmpty(fields.get(4), "end time");
+
+            try {
+                task = new Event(eventDescription,
+                        Event.parseTime(startText), Event.parseTime(endText));
+            } catch (DateTimeParseException e) {
+                throw new StorageException("invalid event time; use yyyy-MM-ddTHH:mm");
+            } catch (IllegalArgumentException e) {
+                throw new StorageException(e.getMessage());
+            }
             break;
         default:
             throw new StorageException("unknown task type '" + fields.get(0) + "'");

@@ -1,5 +1,7 @@
 package isa.ui;
 
+import isa.command.Command;
+import isa.command.ExitCommand;
 import isa.exception.IsaException;
 import isa.exception.StorageException;
 import isa.parser.Parser;
@@ -62,8 +64,9 @@ public class Isa {
     private boolean executeCommand(String command) throws IsaException {
         switch (parser.parseCommand(command)) {
         case BYE:
-            ui.showGoodbye();
-            return false;
+            Command exitCommand = new ExitCommand();
+            exitCommand.execute(taskList, ui, storage);
+            return !exitCommand.isExit();
         case LIST:
             ui.showTasks(taskList);
             break;

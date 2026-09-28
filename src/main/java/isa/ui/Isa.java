@@ -10,15 +10,11 @@ import isa.task.Task;
 import isa.task.TaskList;
 import isa.task.Todo;
 
-import java.util.Scanner;
-
 /**
  * Runs the Isa task manager.
  */
 public class Isa {
     private static final String DATA_FILE_PATH = "./data/isa.txt";
-    private static final String DIVIDER =
-            "____________________________________________________________";
     private static final String COMMAND_TODO = "todo ";
     private static final String COMMAND_DEADLINE = "deadline ";
     private static final String COMMAND_EVENT = "event ";
@@ -29,7 +25,7 @@ public class Isa {
     private static final String EVENT_FROM_SEPARATOR = " /from ";
     private static final String EVENT_TO_SEPARATOR = " /to ";
 
-    private final Scanner scanner = new Scanner(System.in);
+    private final Ui ui = new Ui();
     private final Storage storage = new Storage(DATA_FILE_PATH);
     private TaskList taskList = new TaskList();
 
@@ -46,26 +42,26 @@ public class Isa {
      * Runs the command-reading loop.
      */
     private void run() {
-        printGreeting();
+        ui.showGreeting();
         loadTasks();
 
         while (true) {
-            String command = scanner.nextLine();
-            System.out.println(DIVIDER);
+            String command = ui.readCommand();
+            ui.showDivider();
 
             try {
                 if (!executeCommand(command)) {
-                    System.out.println(DIVIDER);
+                    ui.showDivider();
                     break;
                 }
             } catch (IsaException e) {
-                System.out.println(" " + e.getMessage());
+                ui.showError(e.getMessage());
             }
 
-            System.out.println(DIVIDER);
+            ui.showDivider();
         }
 
-        scanner.close();
+        ui.close();
     }
 
     /**
@@ -76,7 +72,7 @@ public class Isa {
      */
     private boolean executeCommand(String command) throws IsaException {
         if (command.equals("bye")) {
-            System.out.println("Bye. Hope you have a nice day!");
+            ui.showGoodbye();
             return false;
         } else if (command.equals("list")) {
             printTasks();
@@ -97,15 +93,6 @@ public class Isa {
         }
 
         return true;
-    }
-
-    /**
-     * Prints Isa's greeting.
-     */
-    private void printGreeting() {
-        System.out.println("Helloo! I'm Isa");
-        System.out.println("How can I help you?");
-        System.out.println(DIVIDER);
     }
 
     /**

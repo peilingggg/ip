@@ -1,11 +1,10 @@
 package isa.ui;
 
 import isa.command.Command;
-import isa.command.ExitCommand;
-import isa.command.ListCommand;
 import isa.exception.IsaException;
 import isa.exception.StorageException;
 import isa.parser.Parser;
+import isa.parser.Parser.CommandType;
 import isa.storage.LoadResult;
 import isa.storage.Storage;
 import isa.task.Task;
@@ -63,15 +62,14 @@ public class Isa {
      * @return {@code false} when Isa should exit, or {@code true} otherwise.
      */
     private boolean executeCommand(String command) throws IsaException {
-        switch (parser.parseCommand(command)) {
+        CommandType commandType = parser.parseCommand(command);
+
+        switch (commandType) {
         case BYE:
-            Command exitCommand = new ExitCommand();
-            exitCommand.execute(taskList, ui, storage);
-            return !exitCommand.isExit();
         case LIST:
-            Command listCommand = new ListCommand();
-            listCommand.execute(taskList, ui, storage);
-            return !listCommand.isExit();
+            Command simpleCommand = parser.createSimpleCommand(commandType);
+            simpleCommand.execute(taskList, ui, storage);
+            return !simpleCommand.isExit();
         case MARK:
             markTaskAsDone(command);
             break;

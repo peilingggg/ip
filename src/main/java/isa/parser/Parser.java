@@ -1,5 +1,8 @@
 package isa.parser;
 
+import isa.command.Command;
+import isa.command.ExitCommand;
+import isa.command.ListCommand;
 import isa.exception.IsaException;
 import isa.task.Deadline;
 import isa.task.Event;
@@ -50,6 +53,23 @@ public class Parser {
             return CommandType.DELETE;
         } else {
             throw new IsaException("i don't understand :((");
+        }
+    }
+
+    /**
+     * Creates a command for a recognized exit or list action.
+     *
+     * @param commandType Recognized command type.
+     * @return Command that can execute the action.
+     */
+    public Command createSimpleCommand(CommandType commandType) {
+        switch (commandType) {
+        case BYE:
+            return new ExitCommand();
+        case LIST:
+            return new ListCommand();
+        default:
+            throw new IllegalArgumentException("No command class for " + commandType);
         }
     }
 

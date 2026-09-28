@@ -68,6 +68,8 @@ public class Isa {
         case BYE:
         case LIST:
         case TODO:
+        case DEADLINE:
+        case EVENT:
             Command parsedCommand = parser.createCommand(commandType, command);
             parsedCommand.execute(taskList, ui, storage);
             return !parsedCommand.isExit();
@@ -76,12 +78,6 @@ public class Isa {
             break;
         case UNMARK:
             markTaskAsNotDone(command);
-            break;
-        case DEADLINE:
-            addTask(parser.parseDeadline(command));
-            break;
-        case EVENT:
-            addTask(parser.parseEvent(command));
             break;
         case DELETE:
             deleteTask(command);
@@ -119,18 +115,6 @@ public class Isa {
         saveTasks();
 
         ui.showUnmarked(task);
-    }
-
-    /**
-     * Stores and acknowledges a newly created task.
-     *
-     * @param task Task to add.
-     */
-    private void addTask(Task task) {
-        taskList.add(task);
-        saveTasks();
-
-        ui.showAdded(task, taskList.size());
     }
 
     /**

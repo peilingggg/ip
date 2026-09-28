@@ -58,7 +58,7 @@ public class Parser {
     }
 
     /**
-     * Creates a command for a recognized exit, list, or todo action.
+     * Creates a command for a recognized exit, list, or add action.
      *
      * @param commandType Recognized command type.
      * @param fullCommand Full command entered by the user.
@@ -73,6 +73,10 @@ public class Parser {
             return new ListCommand();
         case TODO:
             return new AddCommand(parseTodo(fullCommand));
+        case DEADLINE:
+            return new AddCommand(parseDeadline(fullCommand));
+        case EVENT:
+            return new AddCommand(parseEvent(fullCommand));
         default:
             throw new IllegalArgumentException("No command class for " + commandType);
         }

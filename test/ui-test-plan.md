@@ -610,6 +610,41 @@ Bye. Hope you have a nice day!
 ____________________________________________________________
 ```
 
+## Test case: Accept leap-day deadlines and reject impossible leap days
+
+Aim: Verify that a valid leap day is accepted, an impossible leap day is
+rejected, and the rejected command does not change the task list.
+
+### Inputs
+```text
+deadline leap-day report /by 2028-02-29
+deadline invalid report /by 2027-02-29
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [D][ ] leap-day report (by: Feb 29 2028)
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ enter a valid deadline date in yyyy-MM-dd format
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[D][ ] leap-day report (by: Feb 29 2028)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
 ## Test case: Skip legacy deadline dates
 
 Aim: Verify that an old text deadline produces a warning while valid tasks load.

@@ -22,10 +22,20 @@ public class LoadResult {
         this.warnings = warnings;
     }
 
+    /**
+     * Returns the tasks loaded successfully from storage.
+     *
+     * @return Loaded task list.
+     */
     public TaskList getTaskList() {
         return taskList;
     }
 
+    /**
+     * Returns warnings for records that could not be loaded.
+     *
+     * @return Warnings about skipped records.
+     */
     public List<String> getWarnings() {
         return warnings;
     }

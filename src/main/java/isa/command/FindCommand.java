@@ -19,6 +19,13 @@ public class FindCommand extends Command {
         this.keyword = keyword;
     }
 
+    /**
+     * Displays tasks whose descriptions contain the keyword.
+     *
+     * @param tasks Current task list.
+     * @param ui Console interface for matching tasks.
+     * @param storage Task storage.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         ui.showMatchingTasks(tasks, tasks.findMatchingIndices(keyword));

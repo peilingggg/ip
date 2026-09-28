@@ -24,6 +24,13 @@ public class MarkCommand extends Command {
         this.isDone = isDone;
     }
 
+    /**
+     * Updates the task status, saves the list, and displays the result.
+     *
+     * @param tasks Current task list.
+     * @param ui Console interface for the result.
+     * @param storage Storage used to save the list.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         Task task = tasks.get(taskIndex);

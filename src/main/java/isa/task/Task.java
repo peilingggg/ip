@@ -1,27 +1,46 @@
 package isa.task;
 
-// Task.java
+/**
+ * Represents a task with a description and completion status.
+ */
 public class Task {
     private final String description;
     private boolean isDone;
 
+    /**
+     * Creates an incomplete task with the given description.
+     *
+     * @param description Text describing the task.
+     */
     public Task(String description) {
         this.description = description;
         this.isDone = false;
     }
 
+    /**
+     * Returns the symbol used to display the completion status.
+     *
+     * @return X if completed, or a space otherwise.
+     */
     public String getStatusIcon() {
         return isDone ? "X" : " ";
     }
 
+    /**
+     * Returns the task description.
+     *
+     * @return Description of this task.
+     */
     public String getDescription() {
         return description;
     }
 
+    /** Marks this task as completed. */
     public void markAsDone() {
         isDone = true;
     }
 
+    /** Marks this task as incomplete. */
     public void markAsNotDone() {
         isDone = false;
     }
@@ -60,6 +79,11 @@ public class Task {
                 .replace("\r", "\\r");
     }
 
+    /**
+     * Returns the task status and description for display.
+     *
+     * @return Display representation of this task.
+     */
     @Override
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;

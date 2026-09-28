@@ -24,6 +24,13 @@ public class OnDateCommand extends Command {
         this.date = date;
     }
 
+    /**
+     * Displays deadlines and events that occur on the selected date.
+     *
+     * @param tasks Current task list.
+     * @param ui Console interface for matching tasks.
+     * @param storage Task storage.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         ui.showOnDateHeader(date);

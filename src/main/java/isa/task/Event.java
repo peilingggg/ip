@@ -77,6 +77,11 @@ public class Event extends Task {
                 + dateTime.format(timeFormat) + period;
     }
 
+    /**
+     * Returns the event in the format used by the data file.
+     *
+     * @return File representation of this event.
+     */
     @Override
     public String toDataString() {
         return getBaseDataString("E")
@@ -84,6 +89,11 @@ public class Event extends Task {
                 + " | " + endTime.format(INPUT_FORMAT);
     }
 
+    /**
+     * Returns the event with its start and end times for display.
+     *
+     * @return Display representation of this event.
+     */
     @Override
     public String toString() {
         return "[E]" + super.toString()

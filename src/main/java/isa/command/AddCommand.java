@@ -21,6 +21,13 @@ public class AddCommand extends Command {
         this.task = task;
     }
 
+    /**
+     * Adds the task, saves the list, and displays the result.
+     *
+     * @param tasks Current task list.
+     * @param ui Console interface for the result.
+     * @param storage Storage used to save the list.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         tasks.add(task);

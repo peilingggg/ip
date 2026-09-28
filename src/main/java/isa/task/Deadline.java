@@ -33,11 +33,21 @@ public class Deadline extends Task {
         return dueDate;
     }
 
+    /**
+     * Returns the deadline in the format used by the data file.
+     *
+     * @return File representation of this deadline.
+     */
     @Override
     public String toDataString() {
         return getBaseDataString("D") + " | " + dueDate;
     }
 
+    /**
+     * Returns the deadline with its due date for display.
+     *
+     * @return Display representation of this deadline.
+     */
     @Override
     public String toString() {
         return "[D]" + super.toString()

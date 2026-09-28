@@ -54,6 +54,9 @@ public class Isa {
         ui.close();
     }
 
+    /**
+     * Loads saved tasks and reports warnings for invalid records or storage errors.
+     */
     private void loadTasks() {
         try {
             LoadResult loadResult = storage.load();

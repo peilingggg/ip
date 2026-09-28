@@ -22,6 +22,14 @@ public class DeleteCommand extends Command {
         this.taskIndex = taskIndex;
     }
 
+    /**
+     * Deletes the selected task, saves the list, and displays the result.
+     *
+     * @param tasks Current task list.
+     * @param ui Console interface for the result.
+     * @param storage Storage used to save the list.
+     * @throws IsaException If the selected task does not exist.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws IsaException {
         if (taskIndex < 0 || taskIndex >= tasks.size()) {

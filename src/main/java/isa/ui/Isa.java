@@ -34,35 +34,24 @@ public class Isa {
         ui.showGreeting();
         loadTasks();
 
-        while (true) {
+        boolean isExit = false;
+
+        while (!isExit) {
             String command = ui.readCommand();
             ui.showDivider();
 
             try {
-                if (!executeCommand(command)) {
-                    ui.showDivider();
-                    break;
-                }
+                Command parsedCommand = parser.parse(command);
+                parsedCommand.execute(taskList, ui, storage);
+                isExit = parsedCommand.isExit();
             } catch (IsaException e) {
                 ui.showError(e.getMessage());
+            } finally {
+                ui.showDivider();
             }
-
-            ui.showDivider();
         }
 
         ui.close();
-    }
-
-    /**
-     * Executes a command and indicates whether Isa should continue running.
-     *
-     * @param command Command entered by the user.
-     * @return {@code false} when Isa should exit, or {@code true} otherwise.
-     */
-    private boolean executeCommand(String command) throws IsaException {
-        Command parsedCommand = parser.parse(command);
-        parsedCommand.execute(taskList, ui, storage);
-        return !parsedCommand.isExit();
     }
 
     private void loadTasks() {

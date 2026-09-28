@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,9 +115,14 @@ public class Storage {
             break;
         case "D":
             requireFieldCount(fields, 4);
-            task = new Deadline(
-                    requireNonEmpty(fields.get(2), "description"),
-                    requireNonEmpty(fields.get(3), "due date"));
+            String description = requireNonEmpty(fields.get(2), "description");
+            String savedDate = requireNonEmpty(fields.get(3), "due date");
+
+            try {
+                task = new Deadline(description, LocalDate.parse(savedDate));
+            } catch (DateTimeParseException e) {
+                throw new StorageException("invalid deadline date '" + savedDate + "'");
+            }
             break;
         case "E":
             requireFieldCount(fields, 5);

@@ -11,6 +11,9 @@ import isa.task.Deadline;
 import isa.task.Event;
 import isa.task.Todo;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
 /**
  * Identifies commands and extracts their task arguments.
  */
@@ -94,14 +97,22 @@ public class Parser {
      *
      * @param command Deadline command entered by the user.
      * @return Parsed deadline task.
+     * @throws IsaException If the description or date is missing or the date is invalid.
      */
-    public Deadline parseDeadline(String command) {
+    public Deadline parseDeadline(String command) throws IsaException {
         String details = command.substring(COMMAND_DEADLINE.length());
         String[] parts = details.split(DEADLINE_SEPARATOR, 2);
-        String description = parts[0];
-        String dueDate = parts[1];
 
-        return new Deadline(description, dueDate);
+        if (parts.length != 2 || parts[0].isBlank() || parts[1].isBlank()) {
+            throw new IsaException("use deadline DESCRIPTION /by yyyy-MM-dd");
+        }
+
+        try {
+            LocalDate dueDate = LocalDate.parse(parts[1].trim());
+            return new Deadline(parts[0], dueDate);
+        } catch (DateTimeParseException e) {
+            throw new IsaException("enter a valid deadline date in yyyy-MM-dd format");
+        }
     }
 
     /**

@@ -32,7 +32,7 @@ Aim: Verify that saving added and marked tasks does not change the console outpu
 ### Inputs
 ```text
 todo read book
-deadline return book /by June 6th
+deadline return book /by 2019-10-15
 event project meeting /from Aug 6th 2pm /to 4pm
 mark 1
 bye
@@ -50,7 +50,7 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] return book (by: June 6th)
+   [D][ ] return book (by: Oct 15 2019)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -149,14 +149,14 @@ Bye. Hope you have a nice day!
 ____________________________________________________________
 ```
 
-## Test case: Add deadlines with flexible dates
+## Test case: Add deadlines with calendar dates
 
-Aim: Verify that deadline descriptions and arbitrary `/by` values are stored.
+Aim: Verify that ISO dates are displayed in a readable format and listed in order.
 
 ### Inputs
 ```text
-deadline return book /by Sunday
-deadline do homework /by no idea :-p
+deadline return book /by 2019-10-15
+deadline do homework /by 2020-02-29
 list
 bye
 ```
@@ -168,18 +168,18 @@ How can I help you?
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Oct 15 2019)
  Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] do homework (by: no idea :-p)
+   [D][ ] do homework (by: Feb 29 2020)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
- 1.[D][ ] return book (by: Sunday)
- 2.[D][ ] do homework (by: no idea :-p)
+ 1.[D][ ] return book (by: Oct 15 2019)
+ 2.[D][ ] do homework (by: Feb 29 2020)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope you have a nice day!
@@ -318,6 +318,49 @@ Bye. Hope you have a nice day!
 ____________________________________________________________
 ```
 
+## Test case: Reject invalid deadline dates without adding tasks
+
+Aim: Verify that impossible or missing dates do not change the task list.
+
+### Inputs
+```text
+todo read book
+deadline return book /by 2019-02-30
+list
+deadline return book /by
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ enter a valid deadline date in yyyy-MM-dd format
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] read book
+____________________________________________________________
+____________________________________________________________
+ use deadline DESCRIPTION /by yyyy-MM-dd
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] read book
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
 ## Test case: Load saved tasks
 
 Aim: Verify that valid todo, deadline, and event records are restored with
@@ -326,7 +369,7 @@ their saved completion statuses.
 ### Initial data
 ```text
 T | 1 | read book
-D | 0 | return book | June 6th
+D | 0 | return book | 2019-10-15
 E | 0 | project meeting | Aug 6th 2pm | 4pm
 ```
 
@@ -344,8 +387,41 @@ ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][X] read book
- 2.[D][ ] return book (by: June 6th)
+ 2.[D][ ] return book (by: Oct 15 2019)
  3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope you have a nice day!
+____________________________________________________________
+```
+
+## Test case: Skip legacy deadline dates
+
+Aim: Verify that an old text deadline produces a warning while valid tasks load.
+
+### Initial data
+```text
+T | 0 | read book
+D | 0 | return book | Friday
+D | 1 | finish homework | 2020-02-29
+```
+
+### Inputs
+```text
+list
+bye
+```
+
+### Expected output
+```text
+Helloo! I'm Isa
+How can I help you?
+____________________________________________________________
+ Warning: skipped saved task on line 2: invalid deadline date 'Friday'
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] read book
+ 2.[D][X] finish homework (by: Feb 29 2020)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope you have a nice day!
@@ -428,7 +504,7 @@ data.
 ### Initial data
 ```text
 T | 0 | read book
-D | 0 | return book | Friday
+D | 0 | return book | 2026-09-25
 ```
 
 ### Inputs
@@ -450,7 +526,7 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
- 1.[D][ ] return book (by: Friday)
+ 1.[D][ ] return book (by: Sep 25 2026)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope you have a nice day!

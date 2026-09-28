@@ -24,69 +24,31 @@ public class Parser {
     private static final String EVENT_TO_SEPARATOR = " /to ";
 
     /**
-     * Command types recognized by Isa.
-     */
-    public enum CommandType {
-        BYE, LIST, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE
-    }
-
-    /**
-     * Returns the type of a command without changing its arguments.
+     * Parses a user's input into an executable command.
      *
      * @param command Full command entered by the user.
-     * @return Type of the recognized command.
-     * @throws IsaException If the command is not recognized.
+     * @return Command that can execute the requested action.
+     * @throws IsaException If the command is unknown or a required argument is invalid.
      */
-    public CommandType parseCommand(String command) throws IsaException {
+    public Command parse(String command) throws IsaException {
         if (command.equals("bye")) {
-            return CommandType.BYE;
+            return new ExitCommand();
         } else if (command.equals("list")) {
-            return CommandType.LIST;
+            return new ListCommand();
         } else if (command.startsWith(COMMAND_MARK)) {
-            return CommandType.MARK;
+            return new MarkCommand(parseMarkIndex(command), true);
         } else if (command.startsWith(COMMAND_UNMARK)) {
-            return CommandType.UNMARK;
+            return new MarkCommand(parseUnmarkIndex(command), false);
         } else if (command.equals("todo") || command.startsWith("todo ")) {
-            return CommandType.TODO;
+            return new AddCommand(parseTodo(command));
         } else if (command.startsWith(COMMAND_DEADLINE)) {
-            return CommandType.DEADLINE;
+            return new AddCommand(parseDeadline(command));
         } else if (command.startsWith(COMMAND_EVENT)) {
-            return CommandType.EVENT;
+            return new AddCommand(parseEvent(command));
         } else if (command.equals("delete") || command.startsWith("delete ")) {
-            return CommandType.DELETE;
+            return new DeleteCommand(parseDeleteIndex(command));
         } else {
             throw new IsaException("i don't understand :((");
-        }
-    }
-
-    /**
-     * Creates a command for a recognized user action.
-     *
-     * @param commandType Recognized command type.
-     * @param fullCommand Full command entered by the user.
-     * @return Command that can execute the action.
-     * @throws IsaException If a required task argument is missing or invalid.
-     */
-    public Command createCommand(CommandType commandType, String fullCommand) throws IsaException {
-        switch (commandType) {
-        case BYE:
-            return new ExitCommand();
-        case LIST:
-            return new ListCommand();
-        case TODO:
-            return new AddCommand(parseTodo(fullCommand));
-        case DEADLINE:
-            return new AddCommand(parseDeadline(fullCommand));
-        case EVENT:
-            return new AddCommand(parseEvent(fullCommand));
-        case DELETE:
-            return new DeleteCommand(parseDeleteIndex(fullCommand));
-        case MARK:
-            return new MarkCommand(parseMarkIndex(fullCommand), true);
-        case UNMARK:
-            return new MarkCommand(parseUnmarkIndex(fullCommand), false);
-        default:
-            throw new IllegalArgumentException("No command class for " + commandType);
         }
     }
 

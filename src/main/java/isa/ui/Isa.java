@@ -60,7 +60,7 @@ public class Isa {
      * @return {@code false} when Isa should exit, or {@code true} otherwise.
      */
     private boolean executeCommand(String command) throws IsaException {
-        Command parsedCommand = parser.createCommand(parser.parseCommand(command), command);
+        Command parsedCommand = parser.parse(command);
         parsedCommand.execute(taskList, ui, storage);
         return !parsedCommand.isExit();
     }

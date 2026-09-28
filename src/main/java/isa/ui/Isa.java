@@ -5,26 +5,14 @@ import isa.exception.StorageException;
 import isa.parser.Parser;
 import isa.storage.LoadResult;
 import isa.storage.Storage;
-import isa.task.Deadline;
-import isa.task.Event;
 import isa.task.Task;
 import isa.task.TaskList;
-import isa.task.Todo;
 
 /**
  * Runs the Isa task manager.
  */
 public class Isa {
     private static final String DATA_FILE_PATH = "./data/isa.txt";
-    private static final String COMMAND_DEADLINE = "deadline ";
-    private static final String COMMAND_EVENT = "event ";
-    private static final String COMMAND_MARK = "mark ";
-    private static final String COMMAND_UNMARK = "unmark ";
-    private static final String COMMAND_DELETE = "delete ";
-    private static final String DEADLINE_SEPARATOR = " /by ";
-    private static final String EVENT_FROM_SEPARATOR = " /from ";
-    private static final String EVENT_TO_SEPARATOR = " /to ";
-
     private final Ui ui = new Ui();
     private final Parser parser = new Parser();
     private final Storage storage = new Storage(DATA_FILE_PATH);
@@ -86,13 +74,13 @@ public class Isa {
             markTaskAsNotDone(command);
             break;
         case TODO:
-            addTodo(command);
+            addTask(parser.parseTodo(command));
             break;
         case DEADLINE:
-            addDeadline(command);
+            addTask(parser.parseDeadline(command));
             break;
         case EVENT:
-            addEvent(command);
+            addTask(parser.parseEvent(command));
             break;
         case DELETE:
             deleteTask(command);
@@ -110,7 +98,7 @@ public class Isa {
      * @param command Mark command entered by the user.
      */
     private void markTaskAsDone(String command) {
-        int taskIndex = parseTaskIndex(command, COMMAND_MARK);
+        int taskIndex = parser.parseMarkIndex(command);
         Task task = taskList.get(taskIndex);
         task.markAsDone();
         saveTasks();
@@ -124,70 +112,12 @@ public class Isa {
      * @param command Unmark command entered by the user.
      */
     private void markTaskAsNotDone(String command) {
-        int taskIndex = parseTaskIndex(command, COMMAND_UNMARK);
+        int taskIndex = parser.parseUnmarkIndex(command);
         Task task = taskList.get(taskIndex);
         task.markAsNotDone();
         saveTasks();
 
         ui.showUnmarked(task);
-    }
-
-    /**
-     * Converts a task number in a command to an array index.
-     *
-     * @param command Command containing the task number.
-     * @param commandPrefix Prefix before the task number.
-     * @return Zero-based task index.
-     */
-    private int parseTaskIndex(String command, String commandPrefix) {
-        return Integer.parseInt(command.substring(commandPrefix.length())) - 1;
-    }
-
-    /**
-     * Adds a todo from the supplied command.
-     *
-     * @param command Todo command entered by the user.
-     */
-    private void addTodo(String command) throws IsaException {
-        String description = command.substring("todo".length()).trim();
-
-        if (description.isEmpty()) {
-            throw new IsaException("please enter a todo!");
-        }
-
-        addTask(new Todo(description));
-    }
-
-    /**
-     * Adds a deadline from the supplied command.
-     *
-     * @param command Deadline command entered by the user.
-     */
-    private void addDeadline(String command) {
-        String details = command.substring(COMMAND_DEADLINE.length());
-        String[] parts = details.split(DEADLINE_SEPARATOR, 2);
-        String description = parts[0];
-        String dueDate = parts[1];
-
-        addTask(new Deadline(description, dueDate));
-    }
-
-    /**
-     * Adds an event from the supplied command.
-     *
-     * @param command Event command entered by the user.
-     */
-    private void addEvent(String command) {
-        String details = command.substring(COMMAND_EVENT.length());
-        int fromPosition = details.indexOf(EVENT_FROM_SEPARATOR);
-        int toPosition = details.indexOf(EVENT_TO_SEPARATOR);
-        String description = details.substring(0, fromPosition);
-        String startTime = details.substring(
-                fromPosition + EVENT_FROM_SEPARATOR.length(), toPosition);
-        String endTime = details.substring(
-                toPosition + EVENT_TO_SEPARATOR.length());
-
-        addTask(new Event(description, startTime, endTime));
     }
 
     /**
@@ -209,24 +139,7 @@ public class Isa {
      * @throws IsaException If the task number is missing, invalid, or out of range.
      */
     private void deleteTask(String command) throws IsaException {
-        String taskNumber = command.substring("delete".length()).trim();
-
-        if (taskNumber.isEmpty()) {
-            throw new IsaException("please enter the number of the task to delete!");
-        }
-
-        int taskIndex;
-
-        try {
-            taskIndex = Integer.parseInt(taskNumber) - 1;
-        } catch (NumberFormatException e) {
-            throw new IsaException("please enter a valid task number!");
-        }
-
-        if (taskIndex < 0 || taskIndex >= taskList.size()) {
-            throw new IsaException("that task number does not exist!");
-        }
-
+        int taskIndex = parser.parseDeleteIndex(command, taskList.size());
         Task removedTask = taskList.remove(taskIndex);
         saveTasks();
 
